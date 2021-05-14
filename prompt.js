@@ -27,7 +27,7 @@ function askQuery() {
     inq.prompt([
         {
             type: 'list',
-            name: 'userQuery',
+            name: 'response',
             message: 'What would you like to do?',
             choices: ['View All Employees',
                 'View all employees by department',
@@ -39,13 +39,18 @@ function askQuery() {
                 'End selection']
         }
     ])
-        .then(answers => {
-            if (answers.userQuery === 'View all Employees') {
-                //add in code to see all employees
-            }
-        })
+    .then((answer) => {
+        switch (answer.response) {
+            case 'View all Employees';
+            allEmployee();
+            break;
+        }
+    })
 }
 
+const allEmployee = () => {
+     
+}
 //function to see employees by department or role
 //function to add employee, department, or role
 //function to update existing employee
