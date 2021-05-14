@@ -39,17 +39,22 @@ function askQuery() {
                 'End selection']
         }
     ])
-    .then((answer) => {
-        switch (answer.response) {
-            case 'View all Employees';
-            allEmployee();
-            break;
-        }
-    })
+        .then((answer) => {
+            switch (answer.response) {
+                case 'View all Employees':
+                    allEmployee();
+                    break;
+            }
+        })
 }
-
+//View all employees
 const allEmployee = () => {
-     
+    connection.query('SELECT employee.first_name, emplyee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " ", e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id'),
+    function (err, res) {
+        if (err) throw err
+        console.table(res);
+        askQuery();
+    }
 }
 //function to see employees by department or role
 //function to add employee, department, or role
