@@ -11,19 +11,15 @@ const connection = mysql.createConnection({
     password: '',
     database: 'employee_db',
 });
+
+//connection id
 connection.connect((err) => {
     if (err) throw err;
+    console.log('Connected as Id' + connection.threadId)
     askQuery()
 })
-// function runQuery(queryText) {
-//     const query = connection.query(queryText, (err, res) => {
-//         if (err) throw err;
-//         console.log(console.log(res));
-//         connection.end();
-//     }
-//     );
-//     console.log(query.sql);
-// }
+
+//first prompt
 function askQuery() {
     inq.prompt([
         {
@@ -48,6 +44,7 @@ function askQuery() {
             }
         })
 }
+
 //View all employees
 const allEmployee = () => {
     connection.query('SELECT employee.first_name, emplyee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " ", e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;');
@@ -157,9 +154,92 @@ const updateEmployee = () => {
             {
                 name: 'lastName',
                 type: 'list',
-                choices: 
+                choices: function() {
+                    let lastName = [];
+                    for (let i = 0; i < res.length; i++) {
+                        lastName.push(res[i].last_name);
+                    }
+                    return lastName;
+                },
+                message: 'Please enter employees last name'
+            },
+            {
+                name: 'role',
+                type: 'list',
+                message: 'Please select employee role',
+                choices: roleSelection()
+            },
+        ]).then(function(val) {
+            let roleId = roleSelection().indexOf(val.role) + 1
+            connection.query('UPDATE employee SET WHERE ?',
+            {
+                last_name: val.lastName
+            },
+            {
+                role_id: roleId
+            },
+            function(err) {
+                if (err) throw err
+                console.table(val)
+                askQuery();
             }
-        ])
+            )
+        })
     })
 }
+
+// add role
+const roleAdd = () => {
+    connection.query('SELECT role.title AS title, role.salary AS salary FROM role', function(err, res) {
+        inquirer.prompt([
+            {
+                name: 'title',
+                type: 'input',
+                message: 'What is role title?'
+            },
+            {
+                name: 'salary',
+                type: 'input',
+                message: 'What is role salary?'
+            }
+        ]) .then (function(res) {
+            connection.query(
+                'INSTERT INTO role SET ?',
+                {
+                    title: res.title,
+                    salary: res.salary
+                },
+                function (err) {
+                    if (err) throw err
+                    console.table(res);
+                    askQuery();
+                }
+            )
+        })
+    })
+}
+
+//add department
+const departmentAdd = () => {
+    inquirer.prompt ([
+        {
+            name: 'name',
+            type: 'input',
+            message: 'What is name of the new department?'
+        }
+    ]).then(function(res) {
+        let query = connection.query(
+            'INSERT INTO department SET ?',
+            {
+                name: res.name 
+            },
+            function(err) {
+                if (err) throw err
+                console.table(res);
+                askQuery();
+            }
+        )
+    })
+}
+
 //function to end 
