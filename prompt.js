@@ -41,6 +41,30 @@ function askQuery() {
                 case 'View all Employees':
                     allEmployee();
                     break;
+
+                case 'View all employees by role':
+                    roleEmployee();
+                    break;
+                
+                case 'View all employees by department':
+                    departEmployee();
+                    break;
+
+                case 'Add Employee':
+                    addEmployee();
+                    break;
+
+                case 'Add department':
+                    departmentAdd();
+                    break;
+
+                case 'Add role':
+                    roleAdd();
+                    break;
+
+                case 'Update employee':
+                    updateEmployee();
+                    break;
             }
         })
 }
