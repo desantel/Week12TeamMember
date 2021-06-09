@@ -1,5 +1,4 @@
 const mysql = require("mysql");
-const inq = require("inquirer");
 const cTable = require('console.table');
 const inquirer = require("inquirer");
 
@@ -21,7 +20,7 @@ connection.connect((err) => {
 
 //first prompt
 function askQuery() {
-    inq.prompt([
+    inquirer.prompt([
         {
             type: 'list',
             name: 'response',
@@ -33,7 +32,7 @@ function askQuery() {
                 'Add department',
                 'Add role',
                 'Update employee',
-                'End selection']
+            ]
         }
     ])
         .then((answer) => {
@@ -41,43 +40,61 @@ function askQuery() {
                 case 'View all Employees':
                     allEmployee();
                     break;
+
+                case 'View all employees by role':
+                    roleEmployee();
+                    break;
+                
+                case 'View all employees by department':
+                    departEmployee();
+                    break;
+
+                case 'Add employee':
+                    addEmployee();
+                    break;
+
+                case 'Add department':
+                    departmentAdd();
+                    break;
+
+                case 'Add role':
+                    roleAdd();
+                    break;
+
+                case 'Update employee':
+                    updateEmployee();
+                    break;
             }
         })
 }
 
 //View all employees
-const allEmployee = () => {
-    connection.query('SELECT employee.first_name, emplyee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " ", e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;');
-     const query = connection.query((err, res) => {
-        if (err) throw err;
-        console.table(res);
-        connection.end();
-    }
-    );
-    askQuery();
+function allEmployee() {
+    connection.query('SELECT employee.first_name, emplyee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, " ", e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;',
+    function (err, res) {
+        if (err) throw err
+        console.table(res)
+        askQuery()
+    })
 }
 
 //function to see employees by department or role
 const roleEmployee = () => {
-    connection.query('SELECT employee.first_name, employee.last_name, role.title AS title FROM employee JOIN role ON employee.role_id = role.id;');
-     const query = connection.query((err, res) => {
-        if (err) throw err;
-        console.table(res);
-        connection.end();
-    }
-    );
-    askQuery();
+    connection.query('SELECT employee.first_name, employee.last_name, role.title AS title FROM employee JOIN role ON employee.role_id = role.id;',
+    function (err, res) {
+        if (err) throw err
+        console.table(res)
+        askQuery()
+    });
 }
 
 const departEmployee = () => {
-    connection.query('SELECT employee.first_name, employee.last_name, department.name AS department FROM employee JOIN role ON employee.role_id = role.id JOIN deparment ON role.department_id = department.id ORDER BY employee id;');
-     const query = connection.query((err, res) => {
-        if (err) throw err;
-        console.table(res);
-        connection.end();
-    }
-    );
-    askQuery();
+    connection.query('SELECT employee.first_name, employee.last_name, department.name AS department FROM employee JOIN role ON employee.role_id = role.id JOIN deparment ON role.department_id = department.id ORDER BY employee id;',
+    function (err, res) {
+        if (err) throw err
+        console.table(res)
+        askQuery()
+    });
 }
 
 //function to add employee, department, or role

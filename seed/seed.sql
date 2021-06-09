@@ -1,7 +1,25 @@
+DROP DATABASE IF EXISTS employee_db;
+CREATE database employee_db;
+
+
 USE employee_db;
 
+
+CREATE TABLE  department (
+    id int not null AUTO_INCREMENT primary key,
+    name varchar (30)
+);
+
+CREATE TABLE role (
+    id int AUTO_INCREMENT primary key,
+    title varchar(30),
+    salary decimal,
+    department_id int,
+    foreign key (department_id) references department(id)
+);
+
 CREATE TABLE employee (
-    id int auto_increment primary key,
+    id int AUTO_INCREMENT primary key,
     first_name varchar(30),
     last_name varchar(30),
     role_id int,
@@ -10,20 +28,7 @@ CREATE TABLE employee (
     foreign key (manager_id) references employee(id)
 );
 
-CREATE TABLE role (
-    id int auto_increment primary key,
-    title varchar(30),
-    salary decimal
-    department_id int,
-    foreign key (department_id) references department(id)
-);
 
-CREATE TABLE  department (
-    id int not null auto_increment primary key,
-    name varchar (30),
-);
-
---Insert into deparment--
 INSERT INTO department (name)
 VALUE ('Legal');
 
@@ -36,7 +41,6 @@ VALUE ('Financial');
 INSERT INTO department (name)
 VALUE ('Human Resources');
 
---Insert into role---
 INSERT INTO role (title, salary, department_id)
 VALUE ('Lawyer', 100000, 1);
 
@@ -52,7 +56,7 @@ VALUE ('Registrar', 60000, 4);
 INSERT INTO role (title, salary, department_id)
 VALUE ('Software Engineer', 700000, 2);
 
---Insert into employee--
+
 INSERT INTO employee (first_name, last_name, manager_id, role_id)
 VALUE ('Jay', 'Craft', null, 1);
 
